@@ -102,15 +102,17 @@ class FlappyBird():
             self.Pipes.append(pipe.Pipe(self.WINDOW_HEIGHT, self.WINDOW_WIDTH))
             self.counter = 0
 
-        for i, Pipe in enumerate(self.Pipes):
-            Pipe.update(time_passed)
-            if self.Bird.rect.left > Pipe.x + Pipe.pipe_head_width and not Pipe.bird_passed:
-                self.__score += Pipe.passed()
-            if Pipe.x + Pipe.pipe_head_width < 0:
+        for i, one_pipe in enumerate(self.Pipes):
+            one_pipe.update(time_passed)
+            if self.Bird.rect.left > one_pipe.x + one_pipe.pipe_head_width and not one_pipe.bird_passed:
+                self.__score += one_pipe.passed()
+            if i ==0:
+                print(one_pipe.x + one_pipe.pipe_head_width)
+            if one_pipe.x  < 0:
                 self.Pipes.pop(i)
-            # if pygame.sprite.spritecollide(self.Bird, Pipe, False, None):
-            #     if bird.rect.left < Pipe.x + (Pipe.pipe_head_width + Pipe.pipe_body_width) / 2:
-            #         self.game_state = "DEAD"
+            if pygame.sprite.spritecollide(self.Bird, one_pipe.pipe_group, False, None):
+                if self.Bird.rect.left < one_pipe.x + (one_pipe.pipe_head_width + one_pipe.pipe_body_width) / 2:
+                    self.game_state = "DEAD"
 
         # update bird
         self.Bird.update(time_passed)
@@ -142,7 +144,7 @@ class FlappyBird():
         self.__display_surf.blit(score_text, score_text_rect)
 
         # display max score
-        max_score_text = self.font.render('Max Score: ' + str(self.__score), True, (0, 0, 0))
+        max_score_text = self.font.render('Max Score: ' + str(self.max_score), True, (0, 0, 0))
         max_score_rect = score_text.get_rect()
         max_score_rect.topleft = [10, 30]
         self.__display_surf.blit(max_score_text, max_score_rect)

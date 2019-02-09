@@ -26,7 +26,7 @@ class Pipe():
 
         # the initial pos and spped of the pipe
         self.x = 600
-        self.speed = 0.1
+        self.speed = 0.2
 
         self.pipe_group = None
         self.bird_passed = False
@@ -59,6 +59,8 @@ class Pipe():
             return 0
 
     def update(self, time_passed):
+        self.x -= time_passed * self.speed
+        # print(self.x)
         self.pipe_group.update(time_passed * self.speed)
 
 
