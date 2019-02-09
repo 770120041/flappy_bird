@@ -3,7 +3,7 @@ import pygame
 
 class PipeHead(pygame.sprite.Sprite):
 
-    def __init__(self,x,y):
+    def __init__(self, x, y):
         super(PipeHead, self).__init__()
         self.img = pygame.image.load("./resources/images/pipe_head.png")
 
@@ -11,9 +11,6 @@ class PipeHead(pygame.sprite.Sprite):
 
         self.width = self.img.get_width()
         self.height = self.img.get_height()
-
-    def head_height(self):
-        return self.height
 
     def update(self, move_distance):
         self.rect.left -= move_distance

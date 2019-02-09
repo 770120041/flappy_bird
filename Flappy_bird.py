@@ -5,6 +5,8 @@ import pipe
 
 
 class FlappyBird():
+    FPS = 30
+    PIPE_INTERVAL = 200
     WINDOW_WIDTH, WINDOW_HEIGHT = 640, 480
     BACKGROUND_MUSIC = {
         "moonlight":'./resources/audios/moonlight.wav',
@@ -29,9 +31,11 @@ class FlappyBird():
 
         self.Bird = bird.Bird(self.height, self.width)
         self.Pipes = []
+        self.counter = 0
         self.__score = 0
         self.max_score = 0
         self.clock = pygame.time.Clock()
+        self.clock.tick(self.FPS)
 
     def load_bg_music(self, name="moonlight"):
         # play back ground music
@@ -57,7 +61,7 @@ class FlappyBird():
     def reset_game(self):
         self.game_state = "RUNNING"
         self.max_score = max(self.__score, self.max_score)
-
+        self.counter = 0
         self.__score = 0
         # create a bird
         self.Bird.reset_bird()
@@ -92,9 +96,11 @@ class FlappyBird():
         # how many milliseconds have passed since last call
         time_passed = self.clock.tick()
 
-        # generate a pipe every 3s
-        if time_passed//1000 % 3 == 0:
+        self.counter += 1
+        # generate a pipe every 2s
+        if self.counter == self.PIPE_INTERVAL:
             self.Pipes.append(pipe.Pipe(self.WINDOW_HEIGHT, self.WINDOW_WIDTH))
+            self.counter = 0
 
         for i, Pipe in enumerate(self.Pipes):
             Pipe.update(time_passed)
@@ -125,25 +131,21 @@ class FlappyBird():
 
         self.__display_surf.blit(*(self.Bird.get_bird_img()))
 
-        # display score
-        score_text= self.font.render('Score: ' + str(self.__score), True, (0, 0, 0))
-        score_text_rect = score_text.get_rect()
-        score_text_rect.topleft = [10, 10]
-        self.__display_surf.blit(score_text, score_text_rect)
-
-        # display score
-        max_score_text = self.font.render('Max Score: ' + str(self.__score), True, (0, 0, 0))
-        max_score_rect = score_text.get_rect()
-        max_score_rect.topleft = [10, 30]
-        self.__display_surf.blit(max_score_text, max_score_rect)
-
-
         for Pipe in self.Pipes:
             for p in Pipe.pipe_group:
                 self.__display_surf.blit(p.img, p.rect)
 
+        # display score at last thus it won't be blocked
+        score_text = self.font.render('Score: ' + str(self.__score), True, (0, 0, 0))
+        score_text_rect = score_text.get_rect()
+        score_text_rect.topleft = [10, 10]
+        self.__display_surf.blit(score_text, score_text_rect)
 
-
+        # display max score
+        max_score_text = self.font.render('Max Score: ' + str(self.__score), True, (0, 0, 0))
+        max_score_rect = score_text.get_rect()
+        max_score_rect.topleft = [10, 30]
+        self.__display_surf.blit(max_score_text, max_score_rect)
 
         # if dead, show dead image
         if self.game_state == "DEAD":

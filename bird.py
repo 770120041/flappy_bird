@@ -31,7 +31,7 @@ class Bird(pygame.sprite.Sprite):
         # the x and y pos of the bird
         self.x = self.y = 0
         self.reset_bird()
-        self.jump_speed = 3
+        self.jump_speed = 5
         self.down_speed = 0.2
 
         # the rotation status of the bird
