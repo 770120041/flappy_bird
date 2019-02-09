@@ -1,6 +1,6 @@
 import pygame
 import bird
-
+import pipe
 
 
 
@@ -56,9 +56,12 @@ class FlappyBird():
     # used to init a new game
     def reset_game(self):
         self.game_state = "RUNNING"
+        self.max_score = max(self.__score, self.max_score)
+
         self.__score = 0
         # create a bird
         self.Bird.reset_bird()
+        self.Pipes = []
         self.load_bg_music(self.cur_bg_music)
 
     def on_pause(self):
@@ -86,11 +89,24 @@ class FlappyBird():
         if self.game_state != "RUNNING":
             return
 
-
         # how many milliseconds have passed since last call
         time_passed = self.clock.tick()
 
-        # render bird
+        # generate a pipe every 3s
+        if time_passed//1000 % 3 == 0:
+            self.Pipes.append(pipe.Pipe(self.WINDOW_HEIGHT, self.WINDOW_WIDTH))
+
+        for i, Pipe in enumerate(self.Pipes):
+            Pipe.update(time_passed)
+            if self.Bird.rect.left > Pipe.x + Pipe.pipe_head_width and not Pipe.bird_passed:
+                self.__score += Pipe.passed()
+            if Pipe.x + Pipe.pipe_head_width < 0:
+                self.Pipes.pop(i)
+            # if pygame.sprite.spritecollide(self.Bird, Pipe, False, None):
+            #     if bird.rect.left < Pipe.x + (Pipe.pipe_head_width + Pipe.pipe_body_width) / 2:
+            #         self.game_state = "DEAD"
+
+        # update bird
         self.Bird.update(time_passed)
         self.Bird.cal_bird_pos()
         if self.Bird.is_dead():
@@ -114,6 +130,20 @@ class FlappyBird():
         score_text_rect = score_text.get_rect()
         score_text_rect.topleft = [10, 10]
         self.__display_surf.blit(score_text, score_text_rect)
+
+        # display score
+        max_score_text = self.font.render('Max Score: ' + str(self.__score), True, (0, 0, 0))
+        max_score_rect = score_text.get_rect()
+        max_score_rect.topleft = [10, 30]
+        self.__display_surf.blit(max_score_text, max_score_rect)
+
+
+        for Pipe in self.Pipes:
+            for p in Pipe.pipe_group:
+                self.__display_surf.blit(p.img, p.rect)
+
+
+
 
         # if dead, show dead image
         if self.game_state == "DEAD":
