@@ -1,5 +1,6 @@
 import pygame
 
+
 class PipeBody(pygame.sprite.Sprite):
     def __init__(self):
         super(PipeBody, self).__init__()
@@ -7,4 +8,4 @@ class PipeBody(pygame.sprite.Sprite):
 
         self.rect = self.body_image.get_rect()
         self.width = self.body_image.get_width()
-        self.height = self.body_image.get_heigth
+        self.height = self.body_image.get_height()
